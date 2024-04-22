@@ -6,7 +6,11 @@
 <body>
     <video id="input_video" width="640px" height="480px" autoplay muted loop></video>
     <canvas id="output_canvas" width="640px" height="480px"></canvas>
+    <div id="repetitions_display" style="font-size: 24px; color: red;">Wiederholungen: 0</div> <!-- Element zur Anzeige der Wiederholungen -->
+    <!-- Import der MediaPipe Pose Bibliothek -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
+    <!-- Import der Camera Utility von MediaPipe -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
     <script src="app.js"></script>
 </body>
 </html>
