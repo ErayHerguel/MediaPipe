@@ -43,10 +43,9 @@ function onResults(results) {
         drawLandmarks(canvasCtx, results.poseLandmarks,
                       {color: '#FF0000', lineWidth: 2});
 
-        // Berechnen und Überprüfen des Winkels
-        const hip = results.poseLandmarks[23]; 
-        const knee = results.poseLandmarks[25]; 
-        const ankle = results.poseLandmarks[27]; 
+        const hip = results.poseLandmarks[23];  // Beispielindex für die Hüfte
+        const knee = results.poseLandmarks[25]; // Beispielindex für das Knie
+        const ankle = results.poseLandmarks[27]; // Beispielindex für den Knöchel
         const angle = calculateAngle(hip, knee, ankle);
         checkRepetition(angle);
 
@@ -76,15 +75,17 @@ let isMovingToStart = false;
 
 // Überprüfung und Aktualisierung der Wiederholungszählung
 function checkRepetition(angle) {
-    if (angle > 90 && lastAngle <= 90) {
+    // Diese Logik setzt voraus, dass die Bewegung erkannt wird, wenn das Bein nahezu vollständig gestreckt ist.
+    if (angle > 160 && lastAngle <= 160) { // Der Winkel wird größer, nähert sich einer Streckung
         isMovingToStart = true;
     }
-    if (angle <= 90 && lastAngle > 90 && isMovingToStart) {
+    if (angle <= 160 && lastAngle > 160 && isMovingToStart) { // Das Bein kehrt in eine weniger gestreckte Position zurück
         repetitions++;
         isMovingToStart = false;
     }
     lastAngle = angle;
 }
+
 
 // Funktionen zum Zeichnen der Landmarks und Verbindungen
 function drawLandmarks(context, landmarks, style = {}) {
