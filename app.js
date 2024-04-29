@@ -43,21 +43,20 @@ function onResults(results) {
         drawLandmarks(canvasCtx, results.poseLandmarks,
                       {color: '#FF0000', lineWidth: 2});
 
-        // Berechnen und Überprüfen des Winkels
-        const hip = results.poseLandmarks[23]; 
-        const knee = results.poseLandmarks[25]; 
-        const ankle = results.poseLandmarks[27]; 
+        const hip = results.poseLandmarks[23];
+        const knee = results.poseLandmarks[25];
+        const ankle = results.poseLandmarks[27];
         const angle = calculateAngle(hip, knee, ankle);
         checkRepetition(angle);
 
-        // Anzeigen der Wiederholungen
+        displayAngle(angle); // Anzeigen des aktuellen Winkels
+
         canvasCtx.font = '16px Arial';
         canvasCtx.fillStyle = 'red';
         canvasCtx.fillText('Wiederholungen: ' + repetitions, 10, 50);
     }
     canvasCtx.restore();
 }
-
 
 // Berechnung des Winkels zwischen drei Punkten
 function calculateAngle(hip, knee, ankle) {
@@ -67,6 +66,12 @@ function calculateAngle(hip, knee, ankle) {
         angle = 360 - angle;
     }
     return angle;
+}
+
+function displayAngle(angle) {
+    canvasCtx.font = '16px Arial';
+    canvasCtx.fillStyle = 'blue';
+    canvasCtx.fillText('Winkel: ' + angle.toFixed(2) + '°', 10, 70);
 }
 
 // Zustandsvariablen für die Wiederholungszählung
