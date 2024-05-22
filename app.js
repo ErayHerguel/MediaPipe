@@ -2,6 +2,8 @@ const videoElement = document.getElementById("input_video");
 const canvasElement = document.getElementById("output_canvas");
 const canvasCtx = canvasElement.getContext("2d");
 
+let gyroData = { x: 0, y: 0, z: 0 };  // Speichert die Gyroskopdaten
+
 // MediaPipe Pose Bibliothek laden
 const pose = new Pose({
   locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
@@ -24,6 +26,22 @@ const camera = new Camera(videoElement, {
   height: 480,
 });
 camera.start();
+
+function connectToMQTT() {
+    const client = mqtt.connect('wss://BROKER_ADRESSE:PORT', {
+        clientId: 'webClient'
+    });
+
+    client.on('connect', function () {
+        console.log("Connected to MQTT Broker!");
+        client.subscribe('sensor/gyro');
+    });
+
+    client.on('message', function (topic, message) {
+        [gyroData.x, gyroData.y, gyroData.z] = message.toString().split(',').map(Number);
+        console.log("Received gyro data:", gyroData);
+    });
+}
 
 let repetitions = 0; // Variable für die Anzahl der Wiederholungen
 let lastAngle = 180; // Letzter gemessener Winkel
@@ -77,12 +95,17 @@ function calculateAngle(hip, knee, ankle) {
 }
 
 function checkRepetition(angle) {
-  if (angle > 160 && lastAngle <= 160) {
-    isMovingToStart = true;
-  }
-  if (angle <= 160 && lastAngle > 160 && isMovingToStart) {
-    repetitions++;
-    isMovingToStart = false;
+  const gyroThreshold = 10;  // Minimaler Bewegungsschwellenwert für das Gyroskop
+
+  // Überprüfen Sie, ob eine signifikante Bewegung im Gyroskop detektiert wurde
+  if (Math.abs(gyroData.x) > gyroThreshold || Math.abs(gyroData.y) > gyroThreshold || Math.abs(gyroData.z) > gyroThreshold) {
+    if (angle > 160 && lastAngle <= 160) {
+      isMovingToStart = true;
+    }
+    if (angle <= 160 && lastAngle > 160 && isMovingToStart) {
+      repetitions++;
+      isMovingToStart = false;
+    }
   }
   lastAngle = angle;
 }
@@ -103,7 +126,7 @@ function drawLandmarks(context, landmarks, style = {}) {
 }
 
 function drawConnectors(context, landmarks, connections, style = {}) {
-  context.strokeStyle = style.color || "white";
+  context.strokeStyle = style.color or "white";
   context.lineWidth = style.lineWidth || 2;
   connections.forEach(([startIdx, endIdx]) => {
     const start = landmarks[startIdx];
@@ -113,7 +136,7 @@ function drawConnectors(context, landmarks, connections, style = {}) {
       start.x * canvasElement.width,
       start.y * canvasElement.height
     );
-    context.lineTo(end.x * canvasElement.width, end.y * canvasElement.height);
+    context.lineTo(end.x * canvasElement.width, end y * canvasElement.height);
     context.stroke();
   });
 }
