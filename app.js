@@ -95,17 +95,28 @@ function calculateAngle(hip, knee, ankle) {
 }
 
 function checkRepetition(angle) {
-  const gyroThreshold = 10;  // Minimaler Bewegungsschwellenwert für das Gyroskop
+  const startAngle = 160; // Startwinkel für eine Bewegung
+  const endAngle = 180; // Endwinkel für die Bewegung
+  let progress = 0;
 
-  // Überprüfen Sie, ob eine signifikante Bewegung im Gyroskop detektiert wurde
-  if (Math.abs(gyroData.x) > gyroThreshold || Math.abs(gyroData.y) > gyroThreshold || Math.abs(gyroData.z) > gyroThreshold) {
-    if (angle > 160 && lastAngle <= 160) {
+  // Berechne den Fortschritt basierend auf dem aktuellen Winkel
+  if (angle >= startAngle && angle <= endAngle) {
+      progress = ((angle - startAngle) / (endAngle - startAngle)) * 100;
+  } else if (angle > endAngle) {
+      progress = 100;
+  }
+
+  // Update der Fortschrittsbalken-Breite
+  document.getElementById('progress_bar').style.width = `${progress}%`;
+
+  // Überprüfe, ob die vollständige Bewegung ausgeführt wurde
+  if (angle > startAngle && lastAngle <= startAngle) {
       isMovingToStart = true;
-    }
-    if (angle <= 160 && lastAngle > 160 && isMovingToStart) {
+  }
+  if (angle <= startAngle && lastAngle > startAngle && isMovingToStart) {
       repetitions++;
       isMovingToStart = false;
-    }
+      document.getElementById('progress_bar').style.width = `0%`; // Setze den Balken zurück
   }
   lastAngle = angle;
 }
@@ -126,7 +137,7 @@ function drawLandmarks(context, landmarks, style = {}) {
 }
 
 function drawConnectors(context, landmarks, connections, style = {}) {
-  context.strokeStyle = style.color or "white";
+  context.strokeStyle = style.color || "white";
   context.lineWidth = style.lineWidth || 2;
   connections.forEach(([startIdx, endIdx]) => {
     const start = landmarks[startIdx];
@@ -136,7 +147,10 @@ function drawConnectors(context, landmarks, connections, style = {}) {
       start.x * canvasElement.width,
       start.y * canvasElement.height
     );
-    context.lineTo(end.x * canvasElement.width, end y * canvasElement.height);
+    context.lineTo(
+      end.x * canvasElement.width,
+      end.y * canvasElement.height
+    );
     context.stroke();
   });
 }

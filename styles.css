@@ -51,6 +51,23 @@ canvas {
     animation: shake 0.5s ease-in-out;
 }
 
+#progress_container {
+    width: 90%; /* Breite entsprechend dem Video/Canvas Element */
+    height: 20px; /* Höhe des Containers */
+    background-color: #ddd; /* Hintergrundfarbe des Containers */
+    border-radius: 10px; /* Abgerundete Ecken */
+    margin: 20px 0; /* Abstand oben und unten */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Leichter Schatten für den 3D-Effekt */
+}
+
+#progress_bar {
+    height: 100%; /* Volle Höhe des Containers */
+    background-color: #76b900; /* Farbe des Fortschrittsbalkens */
+    border-radius: 10px; /* Abgerundete Ecken */
+    width: 0%; /* Startbreite des Balkens */
+    transition: width 0.3s ease-in-out; /* Glatte Übergänge beim Ändern der Breite */
+}
+
 @keyframes shake {
     0% {
         transform: translateX(-10px);
