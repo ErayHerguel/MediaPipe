@@ -2,7 +2,7 @@ const videoElement = document.getElementById("input_video");
 const canvasElement = document.getElementById("output_canvas");
 const canvasCtx = canvasElement.getContext("2d");
 
-let gyroData = { x: 0, y: 0, z: 0 };  // Speichert die Gyroskopdaten
+let gyroData = { x: 0, y: 0, z: 0 };  // Speichert Gyroskopdaten
 
 // MediaPipe Pose Bibliothek laden
 const pose = new Pose({
@@ -130,7 +130,7 @@ function drawLandmarks(context, landmarks, style = {}) {
       landmark.y * canvasElement.height,
       style.size || 3,
       0,
-      2 * Math.PI
+      2 * Math PI
     );
     context.fill();
   });
