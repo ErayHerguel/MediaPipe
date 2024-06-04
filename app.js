@@ -2,6 +2,10 @@ const videoElement = document.getElementById("input_video");
 const canvasElement = document.getElementById("output_canvas");
 const canvasCtx = canvasElement.getContext("2d");
 
+const progressBar = document.getElementById("progress_bar");
+const angleDisplay = document.getElementById("angle_display");
+const repetitionsDisplay = document.getElementById("repetitions_display");
+
 // MediaPipe Pose Bibliothek laden
 const pose = new Pose({
   locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
@@ -64,11 +68,11 @@ function onResults(results) {
 
   if (results.poseLandmarks) {
     drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
-      color: "#00FF00",
+      color: "#E5FC3A", // Gelbe Farbe basierend auf dem Prototyp
       lineWidth: 4,
     });
     drawLandmarks(canvasCtx, results.poseLandmarks, {
-      color: "#FF0000",
+      color: "#E5FC3A", // Gelbe Farbe basierend auf dem Prototyp
       lineWidth: 2,
     });
 
@@ -77,11 +81,17 @@ function onResults(results) {
     const ankle = results.poseLandmarks[27];
     const angle = calculateAngle(hip, knee, ankle);
 
-    canvasCtx.font = "16px Arial";
-    canvasCtx.fillStyle = "red";
-    canvasCtx.fillText("Winkel: " + angle.toFixed(2) + "°", 10, 50);
+    // Aktualisieren Sie die HTML-Elemente für den Winkel und die Wiederholungen
+    angleDisplay.innerText = `Winkel: ${angle.toFixed(2)}°`;
     checkRepetition(angle);
-    canvasCtx.fillText("Wiederholungen: " + repetitions, 10, 70);
+    repetitionsDisplay.innerText = `Wiederholungen: ${repetitions}`;
+
+    // Überprüfung, ob der Benutzer im Bild ist und Meldung anzeigen
+    const userInFrame = checkUserInFrame(results.poseLandmarks);
+    displayMessage(!userInFrame);
+
+    // Fortschrittsleiste aktualisieren
+    updateProgressBar(angle);
   }
   canvasCtx.restore();
 }
@@ -144,4 +154,46 @@ function drawConnectors(context, landmarks, connections, style = {}) {
     context.lineTo(end.x * canvasElement.width, end.y * canvasElement.height);
     context.stroke();
   });
+}
+
+// Neue Funktionen zur Überprüfung, ob der Benutzer im Bild ist und Meldung anzeigen
+
+// Initial message display
+document.getElementById("message").style.display = "block";
+
+// Function to check if the user is in frame
+function checkUserInFrame(poseLandmarks) {
+  const visibilityThreshold = 0.5; // Adjust the threshold as needed
+  let inFrame = true;
+
+  for (let landmark of poseLandmarks) {
+    if (landmark.visibility < visibilityThreshold) {
+      inFrame = false;
+      break;
+    }
+  }
+
+  return inFrame;
+}
+
+// Function to display message
+function displayMessage(show) {
+  const messageElement = document.getElementById("message");
+  if (show) {
+    messageElement.style.display = "block";
+  } else {
+    messageElement.style.display = "none";
+  }
+}
+
+// Funktion zur Aktualisierung der Fortschrittsleiste basierend auf dem Winkel
+function updateProgressBar(angle) {
+  const minAngle = 100; // Winkel, wenn das Bein unten ist
+  const maxAngle = 180; // Winkel, wenn das Bein oben ist
+  const progressPercentage = ((angle - minAngle) / (maxAngle - minAngle)) * 100;
+
+  // Begrenzung des Prozentsatzes zwischen 0 und 100
+  const boundedProgress = Math.max(0, Math.min(progressPercentage, 100));
+
+  progressBar.style.width = `${boundedProgress}%`;
 }
