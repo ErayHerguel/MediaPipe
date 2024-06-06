@@ -62,4 +62,40 @@ canvas {
 
 #message {
   position: absolute;
-  to
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(230, 57, 70, 0.9);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  display: none; /* initially hidden */
+  z-index: 1000;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25%,
+  75% {
+    transform: translateX(10px);
+  }
+  50% {
+    transform: translateX(-10px);
+  }
+}
+
+@media (max-width: 768px) {
+  #angle_display,
+  #repetitions_display {
+    font-size: 1.5rem;
+  }
+  video,
+  canvas,
+  #progress_container {
+    width: 100%;
+  }
+}
