@@ -68,11 +68,11 @@ function onResults(results) {
 
   if (results.poseLandmarks) {
     drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
-      color: "#E5FC3A", // Gelbe Farbe basierend auf dem Prototyp
+      color: "#E5FC3A",
       lineWidth: 4,
     });
     drawLandmarks(canvasCtx, results.poseLandmarks, {
-      color: "#E5FC3A", // Gelbe Farbe basierend auf dem Prototyp
+      color: "#E5FC3A",
       lineWidth: 2,
     });
 
@@ -81,7 +81,6 @@ function onResults(results) {
     const ankle = results.poseLandmarks[27];
     const angle = calculateAngle(hip, knee, ankle);
 
-    // Aktualisieren Sie die HTML-Elemente für den Winkel und die Wiederholungen
     angleDisplay.innerText = `Winkel: ${angle.toFixed(2)}°`;
     checkRepetition(angle);
     repetitionsDisplay.innerText = `Wiederholungen: ${repetitions}`;
@@ -163,7 +162,7 @@ document.getElementById("message").style.display = "block";
 
 // Function to check if the user is in frame
 function checkUserInFrame(poseLandmarks) {
-  const visibilityThreshold = 0.5; // Adjust the threshold as needed
+  const visibilityThreshold = 0.5;
   let inFrame = true;
 
   for (let landmark of poseLandmarks) {
