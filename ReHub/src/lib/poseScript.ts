@@ -158,4 +158,68 @@ function checkRepetition(angle: number): void {
   lastAngle = angle;
 }
 
-function drawLandmarks(context: CanvasRenderingCon
+function drawLandmarks(context: CanvasRenderingContext2D, landmarks: any[], style: any = {}): void {
+  context.fillStyle = style.color || "white";
+  landmarks.forEach((landmark) => {
+    context.beginPath();
+    context.arc(
+      landmark.x * context.canvas.width,
+      landmark.y * context.canvas.height,
+      style.size || 3,
+      0,
+      2 * Math.PI
+    );
+    context.fill();
+  });
+}
+
+function drawConnectors(context: CanvasRenderingContext2D, landmarks: any[], connections: any[], style: any = {}): void {
+  context.strokeStyle = style.color || "white";
+  context.lineWidth = style.lineWidth || 2;
+  connections.forEach(([startIdx, endIdx]) => {
+    const start = landmarks[startIdx];
+    const end = landmarks[endIdx];
+    context.beginPath();
+    context.moveTo(
+      start.x * context.canvas.width,
+      start.y * context.canvas.height
+    );
+    context.lineTo(end.x * context.canvas.width, end.y * context.canvas.height);
+    context.stroke();
+  });
+}
+
+function checkUserInFrame(poseLandmarks: any[]): boolean {
+  const visibilityThreshold = 0.5;
+  let inFrame = true;
+
+  for (let landmark of poseLandmarks) {
+    if (landmark.visibility < visibilityThreshold) {
+      inFrame = false;
+      break;
+    }
+  }
+
+  return inFrame;
+}
+
+function displayMessage(show: boolean, messageElement: HTMLDivElement): void {
+  if (!messageElement) return;
+
+  if (show) {
+    messageElement.style.display = "block";
+  } else {
+    messageElement.style.display = "none";
+  }
+}
+
+function updateProgressBar(angle: number, progressBar: HTMLDivElement): void {
+  const minAngle = 100;
+  const maxAngle = 180;
+  const progressPercentage = ((angle - minAngle) / (maxAngle - minAngle)) * 100;
+  const boundedProgress = Math.max(0, Math.min(progressPercentage, 100));
+
+  if (progressBar) {
+    progressBar.style.width = `${boundedProgress}%`;
+  }
+}

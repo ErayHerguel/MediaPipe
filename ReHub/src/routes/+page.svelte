@@ -21,6 +21,9 @@
   let repetitions = 0;
   let isMovingToStart = false;
 
+  let userInstruction =
+    "Bitte setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.";
+
   onMount(() => {
     videoElement = document.getElementById("input_video") as HTMLVideoElement;
     canvasElement = document.getElementById(
@@ -104,7 +107,12 @@
       repetitionsDisplay.innerText = `Wiederholungen: ${repetitions}`;
 
       const userInFrame = checkUserInFrame(results.poseLandmarks);
-      displayMessage(!userInFrame);
+      if (!userInFrame) {
+        userInstruction = getInstruction(results.poseLandmarks);
+      } else {
+        userInstruction = "Jetzt kann die Kamera Sie sehen.";
+      }
+      messageElement.innerText = userInstruction;
 
       updateProgressBar(angle);
     }
@@ -198,12 +206,33 @@
     return inFrame;
   }
 
-  function displayMessage(show: boolean) {
-    if (show) {
-      messageElement.style.display = "block";
-    } else {
-      messageElement.style.display = "none";
+  function getInstruction(poseLandmarks: any[]) {
+    const instructions: string[] = [];
+    const visibilityThreshold = 0.5;
+
+    const checkVisibility = (
+      index: number,
+      name: string,
+      direction: string,
+    ) => {
+      if (poseLandmarks[index].visibility < visibilityThreshold) {
+        instructions.push(
+          `Bitte ${direction}, um die ${name} sichtbar zu machen.`,
+        );
+      }
+    };
+
+    checkVisibility(0, "Nase", "weiter nach hinten");
+    checkVisibility(11, "linke Schulter", "weiter nach rechts");
+    checkVisibility(12, "rechte Schulter", "weiter nach links");
+    checkVisibility(23, "linke Hüfte", "weiter nach rechts");
+    checkVisibility(24, "rechte Hüfte", "weiter nach links");
+
+    if (instructions.length === 0) {
+      return "Bitte setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.";
     }
+
+    return instructions.join(" ");
   }
 
   function updateProgressBar(angle: number) {
@@ -219,8 +248,18 @@
 
 <main>
   <div id="loading">Loading...</div>
-  <video id="input_video" width="640" height="480" autoplay muted loop></video>
-  <canvas id="output_canvas" width="640" height="480"></canvas>
+  <video
+    id="input_video"
+    width="640"
+    height="480"
+    autoplay
+    muted
+    loop
+    playsinline
+    style="display: none;"
+  ></video>
+  <canvas id="output_canvas" width="640" height="480" style="display: none;"
+  ></canvas>
   <div id="angle_display">Winkel: 0°</div>
   <div id="repetitions_display">Wiederholungen: 0</div>
   <div id="progress_container">
