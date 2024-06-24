@@ -256,12 +256,14 @@
     ></video>
     <canvas id="output_canvas" width="640" height="480" style="display: none;"
     ></canvas>
-    <div id="angle_display">Winkel: 0°</div>
-    <div id="repetitions_display">Wiederholungen: 0</div>
+    <div class="info-container">
+      <div id="angle_display" class="info-box">Winkel: 0°</div>
+      <div id="repetitions_display" class="info-box">Wiederholungen: 0</div>
+    </div>
     <div id="progress_container">
       <div id="progress_bar"></div>
     </div>
-    <div id="message">
+    <div id="message" class="info-box">
       Bitte setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen
       kann.
     </div>
@@ -276,6 +278,7 @@
       height: 100vh;
       margin: 0;
       font-family: Arial, sans-serif;
+      background-color: #FAFFFE;
     }
   
     video,
@@ -285,25 +288,38 @@
       height: auto;
     }
   
+    .info-container {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 640px;
+      margin-top: 10px;
+    }
+  
+    .info-box {
+      background-color: #FFFFFF;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.10);
+      text-align: center;
+      font-size: 1.2em;
+      color: #006B58;
+      width: 48%;
+    }
+  
     #progress_container {
       width: 100%;
       max-width: 640px;
       background-color: #eee;
       margin-top: 10px;
+      height: 20px;
+      border-radius: 10px;
+      overflow: hidden;
     }
   
     #progress_bar {
       width: 0;
-      height: 10px;
-      background-color: #4caf50;
-    }
-  
-    #angle_display,
-    #repetitions_display,
-    #message {
-      margin-top: 10px;
-      text-align: center;
-      font-size: 1.2em;
+      height: 100%;
+      background-color: #00C896;
     }
   </style>
-  

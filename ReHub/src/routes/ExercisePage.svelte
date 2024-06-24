@@ -3,15 +3,25 @@
     import { exerciseStore } from '../lib/exerciseStore';
     import { goto } from '$app/navigation';
     import { get } from 'svelte/store';
-  
+
     let exercise = { title: '', gif: '', instructions: '', sets: 0, reps: 0 };
-  
+
     onMount(() => {
-        exercise = get(exerciseStore); // Get the current exercise data from the store
+        const storedExercise = get(exerciseStore);
+        if (storedExercise) {
+            exercise = storedExercise;
+        } else {
+            // Set a default gif if none is provided
+            exercise.gif = '/exercise.gif';
+        }
     });
-  
+
     function goBack() {
         goto('/'); // navigate back to the dashboard
+    }
+
+    function startExercise() {
+        goto('/tracking'); // navigate to the tracking page
     }
 </script>
 
@@ -21,7 +31,7 @@
         background: #FAFFFE;
         max-width: 390px;
         margin: 0 auto;
-        font-family: Arial, sans-serif;
+        font-family: 'SF Pro', sans-serif;
     }
 
     .header {
@@ -38,18 +48,15 @@
     .header h1 {
         font-size: 24px;
         color: #006B58;
-        font-family: 'SF Pro', sans-serif;
     }
 
     .title {
-        margin-left: 8px;
+        margin-left: 20px;
         margin-top: 12px;
         margin-bottom: 8px;
-        color: var(--Schwarz, #343434);
+        color: #343434;
         font-size: 16px;
-        font-style: normal;
         font-weight: 700;
-        line-height: normal;
     }
 
     .content-block {
@@ -68,7 +75,7 @@
     }
 
     .content-block p {
-        font-size: 14px;
+        font-size: 16px;
         color: #333;
     }
 
@@ -97,20 +104,31 @@
     }
 
     .start-button button {
-        background: #00C896;
+        background: #006B58;
         color: white;
         border: none;
-        padding: 12px 24px;
-        border-radius: 50px;
+        padding: 16px 32px;
+        border-radius: 30px;
         font-size: 16px;
         cursor: pointer;
         box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.10);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #FFFFFF;
+        font-weight: 600;
+    }
+
+    .start-button button svg {
+        width: 16px;
+        height: 16px;
+        fill: white;
     }
 </style>
 
 <div class="exercise-container">
     <div class="header">
-        <img src="/SF_Back.svg" alt="Back" on:click={goBack} />
+        <img src="/static/back_arrow.svg" alt="Back" on:click={goBack} />
         <h1>{exercise.title}</h1>
     </div>
 
@@ -133,6 +151,9 @@
     </div>
 
     <div class="start-button">
-        <button>Übung starten</button>
+        <button on:click={startExercise}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            Übung starten
+        </button>
     </div>
 </div>
