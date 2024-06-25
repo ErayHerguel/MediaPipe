@@ -128,7 +128,7 @@
 
 <div class="exercise-container">
     <div class="header">
-        <img src="/static/back_arrow.svg" alt="Back" on:click={goBack} />
+        <img src="/static/SF_Back.svg" alt="Back" on:click={goBack} />
         <h1>{exercise.title}</h1>
     </div>
 
