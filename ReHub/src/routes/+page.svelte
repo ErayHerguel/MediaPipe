@@ -1,14 +1,15 @@
 <script>
-  import { page } from '$app/stores';
-  import Dashboard from './Dashboard.svelte';
-  import AppBar from '../lib/AppBar.svelte';
+  import { page } from "$app/stores";
+  import Dashboard from "./Dashboard.svelte";
+  import AppBar from "../lib/AppBar.svelte";
 
-  let currentPage = 'dashboard';
-  $: currentPage = $page.url.pathname === '/exercise' ? 'exercise' : 'dashboard';
+  let currentPage = "dashboard";
+  $: currentPage =
+    $page.url.pathname === "/exercise" ? "exercise" : "dashboard";
 </script>
 
 <main>
-  {#if currentPage === 'dashboard'}
+  {#if currentPage === "dashboard"}
     <Dashboard />
   {/if}
 </main>
