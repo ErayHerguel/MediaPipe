@@ -11,35 +11,31 @@
   let canvasElement: HTMLCanvasElement;
   let canvasCtx: CanvasRenderingContext2D;
 
-  let progressBar: HTMLDivElement;
-  let angleDisplay: HTMLDivElement;
   let repetitionsDisplay: HTMLDivElement;
-  let messageElement: HTMLDivElement;
 
   let lastAngle = 0;
   let lastUpdateTime = 0;
   let debounceTime = 1000;
   let repetitions = 0;
   let isMovingToStart = false;
+  let currentSet = 1;
+  let totalSets = 3;
+  let totalReps = 12;
 
-  let userInstruction = writable(
-    "Bitte setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.",
-  );
-  let activeIcon = writable("mute"); // Store for active icon
+  let userInstruction = writable("Setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.");
+  let activeIcon = writable("high"); // Default to high volume
+
+  function enqueueInstruction(text, audioFile) {
+    const audio = new Audio(audioFile);
+    audio.play();
+  }
 
   onMount(() => {
     videoElement = document.getElementById("input_video") as HTMLVideoElement;
-    canvasElement = document.getElementById(
-      "output_canvas",
-    ) as HTMLCanvasElement;
+    canvasElement = document.getElementById("output_canvas") as HTMLCanvasElement;
     canvasCtx = canvasElement.getContext("2d") as CanvasRenderingContext2D;
 
-    progressBar = document.getElementById("progress_bar") as HTMLDivElement;
-    angleDisplay = document.getElementById("angle_display") as HTMLDivElement;
-    repetitionsDisplay = document.getElementById(
-      "repetitions_display",
-    ) as HTMLDivElement;
-    messageElement = document.getElementById("message") as HTMLDivElement;
+    repetitionsDisplay = document.getElementById("repetitions_display") as HTMLDivElement;
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices
@@ -48,8 +44,7 @@
           videoElement.srcObject = stream;
 
           const pose = new Pose({
-            locateFile: (file) =>
-              `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
           });
 
           pose.setOptions({
@@ -82,13 +77,7 @@
   function onResults(results: any) {
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    canvasCtx.drawImage(
-      results.image,
-      0,
-      0,
-      canvasElement.width,
-      canvasElement.height,
-    );
+    canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
     if (results.poseLandmarks) {
       drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
@@ -105,28 +94,14 @@
       const ankle = results.poseLandmarks[27];
       const angle = calculateAngle(hip, knee, ankle);
 
-      angleDisplay.innerText = `Winkel: ${angle.toFixed(2)}°`;
       checkRepetition(angle);
-      repetitionsDisplay.innerText = `Wiederholungen: ${repetitions}`;
-
-      const userInFrame = checkUserInFrame(results.poseLandmarks);
-      if (!userInFrame) {
-        updateInstruction(getInstruction(results.poseLandmarks));
-      } else {
-        updateInstruction("Jetzt kann die Kamera Sie sehen.");
-      }
-
       updateProgressBar(angle);
     }
     canvasCtx.restore();
   }
 
   function calculateAngle(hip: any, knee: any, ankle: any) {
-    if (
-      hip.visibility < 0.6 ||
-      knee.visibility < 0.6 ||
-      ankle.visibility < 0.6
-    ) {
+    if (hip.visibility < 0.6 || knee.visibility < 0.6 || ankle.visibility < 0.6) {
       return lastAngle;
     }
     const radians =
@@ -150,6 +125,17 @@
       repetitions++;
       isMovingToStart = false;
       lastUpdateTime = currentTime;
+
+      if (repetitions >= totalReps) {
+        repetitions = 0;
+        currentSet++;
+        if (currentSet > totalSets) {
+          // Finish the exercise
+          enqueueInstruction("Übung abgeschlossen!", "/completion.mp3");
+        } else {
+          enqueueInstruction(`Satz ${currentSet} abgeschlossen!`, "/set_completed.mp3");
+        }
+      }
     }
     lastAngle = angle;
   }
@@ -194,75 +180,13 @@
     });
   }
 
-  function checkUserInFrame(poseLandmarks: any[]) {
-    const visibilityThreshold = 0.5;
-    let inFrame = true;
-
-    for (let landmark of poseLandmarks) {
-      if (landmark.visibility < visibilityThreshold) {
-        inFrame = false;
-        break;
-      }
-    }
-
-    return inFrame;
-  }
-
-  function getInstruction(poseLandmarks: any[]) {
-    const instructions: string[] = [];
-    const visibilityThreshold = 0.5;
-
-    const checkVisibility = (
-      index: number,
-      name: string,
-      direction: string,
-    ) => {
-      if (poseLandmarks[index].visibility < visibilityThreshold) {
-        instructions.push(
-          `Bitte ${direction}, um die ${name} sichtbar zu machen.`,
-        );
-      }
-    };
-
-    checkVisibility(0, "Nase", "weiter nach hinten");
-    checkVisibility(11, "linke Schulter", "weiter nach rechts");
-    checkVisibility(12, "rechte Schulter", "weiter nach links");
-    checkVisibility(23, "linke Hüfte", "weiter nach rechts");
-    checkVisibility(24, "rechte Hüfte", "weiter nach links");
-
-    if (instructions.length === 0) {
-      return "Bitte setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.";
-    }
-
-    return instructions.join(" ");
-  }
-
-  function updateInstruction(instruction) {
-    userInstruction.set(instruction);
-    activeIcon.subscribe((value) => {
-      if (value === "mute") {
-        // Do nothing
-      } else if (value === "medium") {
-        playInstruction("/static/signal.mp3");
-      } else if (value === "high") {
-        playInstruction("/static/Anweisung.mp3");
-      }
-    });
-  }
-
   function updateProgressBar(angle: number) {
-    const minAngle = 100;
+    const minAngle = 90;
     const maxAngle = 180;
-    const progressPercentage =
-      ((angle - minAngle) / (maxAngle - minAngle)) * 100;
+    const progressPercentage = ((angle - minAngle) / (maxAngle - minAngle)) * 100;
     const boundedProgress = Math.max(0, Math.min(progressPercentage, 100));
 
-    progressBar.style.width = `${boundedProgress}%`;
-  }
-
-  function playInstruction(audioFile) {
-    let audio = new Audio(audioFile);
-    audio.play();
+    repetitionsDisplay.style.height = `${boundedProgress}%`;
   }
 </script>
 
@@ -270,50 +194,46 @@
   <div class="instruction-container">
     <p class="instruction-text">{$userInstruction}</p>
     <div class="icon-container">
-      <img
-        src="/Mute.svg"
-        alt="Mute"
+      <button
+        type="button"
+        aria-label="Mute"
         class:active={$activeIcon === "mute"}
         on:click={() => activeIcon.set("mute")}
-      />
-      <img
-        src="/Signal.svg"
-        alt="Medium Volume"
+        class:highlight={$activeIcon === "mute"}
+      >
+        <img src="/Mute.svg" alt="Mute" style="width: 25px; height: 25px;" />
+      </button>
+      <button
+        type="button"
+        aria-label="Medium Volume"
         class:active={$activeIcon === "medium"}
         on:click={() => activeIcon.set("medium")}
-      />
-      <img
-        src="/Loud.svg"
-        alt="High Volume"
+        class:highlight={$activeIcon === "medium"}
+      >
+        <img src="/Signal.svg" alt="Medium Volume" style="width: 28px; height: 28px;" />
+      </button>
+      <button
+        type="button"
+        aria-label="High Volume"
         class:active={$activeIcon === "high"}
         on:click={() => activeIcon.set("high")}
-      />
+        class:highlight={$activeIcon === "high"}
+      >
+        <img src="/Loud.svg" alt="High Volume" style="width: 30px; height: 30px;" />
+      </button>
+    </div>
+  </div>
+  <div class="set-rep-display">
+    <div class="set-rep-progress" id="repetitions_display">
+      <div class="set-rep-text">
+        <p>Set {currentSet}</p>
+        <p>Reps {repetitions}</p>
+      </div>
     </div>
   </div>
   <div id="loading">Loading...</div>
-  <video
-    id="input_video"
-    width="640"
-    height="480"
-    autoplay
-    muted
-    loop
-    playsinline
-    style="display: none;"
-  ></video>
-  <canvas id="output_canvas" width="640" height="480" style="display: none;"
-  ></canvas>
-  <div class="info-container">
-    <div id="angle_display" class="info-box">Winkel: 0.00°</div>
-    <div id="repetitions_display" class="info-box">Wiederholungen: 0</div>
-  </div>
-  <div id="progress_container">
-    <div id="progress_bar"></div>
-  </div>
-  <div id="message" class="info-box">
-    Bitte setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen
-    kann.
-  </div>
+  <video id="input_video" width="640" height="480" autoplay muted loop playsinline style="display: none;"></video>
+  <canvas id="output_canvas" width="640" height="480" style="display: none;"></canvas>
 </main>
 
 <style>
@@ -324,7 +244,7 @@
     justify-content: center;
     height: 100vh;
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: "SF Pro", sans-serif;
     background-color: #fafffe;
   }
 
@@ -353,9 +273,10 @@
     gap: 30px;
   }
 
-  .icon-container img {
-    width: 32px;
-    height: 32px;
+  .icon-container button {
+    background: none;
+    border: none;
+    padding: 0;
     cursor: pointer;
   }
 
@@ -364,45 +285,50 @@
       hue-rotate(116deg) brightness(101%) contrast(89%);
   }
 
-  video,
-  canvas {
-    width: 100%;
-    max-width: 640px;
-    height: auto;
+  .highlight {
+    filter: brightness(0) saturate(100%) invert(47%) sepia(78%) saturate(1007%)
+      hue-rotate(116deg) brightness(101%) contrast(89%);
   }
 
-  .info-container {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    max-width: 640px;
-    margin-top: 10px;
-  }
-
-  .info-box {
-    background-color: #ffffff;
-    padding: 12px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    font-size: 1.2em;
-    color: #006b58;
-    width: 48%;
-  }
-
-  #progress_container {
-    width: 100%;
-    max-width: 640px;
-    background-color: #eee;
-    margin-top: 10px;
-    height: 20px;
-    border-radius: 10px;
+  .set-rep-display {
+    position: relative;
+    width: 350px; /* same as the instruction container */
+    height: 360px;
     overflow: hidden;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.1);
   }
 
-  #progress_bar {
-    width: 0;
+  .set-rep-progress {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: #00c896;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 0;
+  }
+
+  .set-rep-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
     height: 100%;
-    background-color: #00c896;
+    color: var(--Schwarz, #343434);
+    font-size: 64px;
+    font-weight: 500;
+  }
+
+  .set-rep-text p {
+    margin: 0;
+    line-height: normal;
   }
 </style>

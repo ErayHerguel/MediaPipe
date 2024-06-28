@@ -20,8 +20,19 @@
     goto("/"); // navigate back to the dashboard
   }
 
-  function startExercise() {
-    goto("/tracking"); // navigate to the tracking page
+  async function startExercise() {
+    try {
+      // Create a silent audio to trigger user interaction permission
+      const audio = new Audio("/Signal.mp3");
+      await audio.play();
+      audio.pause();
+      audio.currentTime = 0;
+
+      goto("/tracking"); // navigate to the tracking page
+    } catch (error) {
+      console.error("Audio permission error:", error);
+      alert("Bitte erlauben Sie die Audiowiedergabe, um fortzufahren.");
+    }
   }
 </script>
 
@@ -33,7 +44,7 @@
 
   <div class="title">Anleitung</div>
   <div class="content-block">
-    <img src={"/exercise.gif"} alt={exercise.title} />
+    <img src={exercise.gif} alt={exercise.title} />
     <p>{exercise.instructions}</p>
   </div>
 
@@ -50,10 +61,21 @@
   </div>
 
   <div class="start-button">
-    <button on:click={startExercise}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-        ><path d="M8 5v14l11-7z" /></svg
-      >
+    <button on:click={() => {
+      // Direct user interaction to play audio
+      const audio = new Audio("/Signal.mp3");
+      audio.play().then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+        startExercise();
+      }).catch(error => {
+        console.error("Audio play failed:", error);
+        alert("Bitte erlauben Sie die Audiowiedergabe, um fortzufahren.");
+      });
+    }}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M8 5v14l11-7z" />
+      </svg>
       Übung starten
     </button>
   </div>
@@ -109,9 +131,7 @@
     border-radius: 10px;
     object-fit: cover; /* Crop the image to fit the container */
     object-position: center; /* Center the image */
-    clip-path: inset(
-      20% 20% 10% 10%
-    ); /* Adjust these values to crop white space */
+    clip-path: inset(20% 20% 10% 10%); /* Adjust these values to crop white space */
   }
 
   .content-block p {
