@@ -44,7 +44,7 @@
 
   <div class="title">Anleitung</div>
   <div class="content-block">
-    <img src={exercise.gif} alt={exercise.title} />
+    <img src={"/exercise.gif"} alt={exercise.title} />
     <p>{exercise.instructions}</p>
   </div>
 
@@ -61,18 +61,23 @@
   </div>
 
   <div class="start-button">
-    <button on:click={() => {
-      // Direct user interaction to play audio
-      const audio = new Audio("/Signal.mp3");
-      audio.play().then(() => {
-        audio.pause();
-        audio.currentTime = 0;
-        startExercise();
-      }).catch(error => {
-        console.error("Audio play failed:", error);
-        alert("Bitte erlauben Sie die Audiowiedergabe, um fortzufahren.");
-      });
-    }}>
+    <button
+      on:click={() => {
+        // Direct user interaction to play audio
+        const audio = new Audio("/Signal.mp3");
+        audio
+          .play()
+          .then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            startExercise();
+          })
+          .catch((error) => {
+            console.error("Audio play failed:", error);
+            alert("Bitte erlauben Sie die Audiowiedergabe, um fortzufahren.");
+          });
+      }}
+    >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M8 5v14l11-7z" />
       </svg>
@@ -107,7 +112,7 @@
   }
 
   .title {
-    margin-left: 20px;
+    margin-left: 8px;
     margin-top: 12px;
     margin-bottom: 8px;
     color: #343434;
@@ -131,7 +136,9 @@
     border-radius: 10px;
     object-fit: cover; /* Crop the image to fit the container */
     object-position: center; /* Center the image */
-    clip-path: inset(20% 20% 10% 10%); /* Adjust these values to crop white space */
+    clip-path: inset(
+      20% 20% 10% 10%
+    ); /* Adjust these values to crop white space */
   }
 
   .content-block p {

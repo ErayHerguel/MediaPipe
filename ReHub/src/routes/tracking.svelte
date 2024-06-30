@@ -3,6 +3,8 @@
   import posePkg from "@mediapipe/pose";
   import cameraPkg from "@mediapipe/camera_utils";
   import { writable } from "svelte/store";
+  import { goto } from "$app/navigation";
+  import { get } from "svelte/store";
 
   const { Pose, POSE_CONNECTIONS } = posePkg;
   const { Camera } = cameraPkg;
@@ -21,11 +23,14 @@
   let currentSet = 1;
   let totalSets = 3;
   let totalReps = 12;
+  // const minAngle = 90;
+  // const maxAngle = 180;
+  // let progressPercentage = 0;
 
   let userInstruction = writable("Setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.");
   let activeIcon = writable("high"); // Default to high volume
 
-  function enqueueInstruction(text, audioFile) {
+  function enqueueInstruction(text: string, audioFile: string) {
     const audio = new Audio(audioFile);
     audio.play();
   }
@@ -115,30 +120,32 @@
   }
 
   function checkRepetition(angle: number) {
-    const currentTime = Date.now();
-    if (currentTime - lastUpdateTime < debounceTime) return;
+  const currentTime = Date.now();
+  if (currentTime - lastUpdateTime < debounceTime) return;
 
-    if (angle >= 160 && lastAngle < 160) {
-      isMovingToStart = true;
-    }
-    if (angle < 160 && lastAngle >= 160 && isMovingToStart) {
-      repetitions++;
-      isMovingToStart = false;
-      lastUpdateTime = currentTime;
+  if (angle >= 160 && lastAngle < 160) {
+    isMovingToStart = true;
+  }
+  if (angle < 160 && lastAngle >= 160 && isMovingToStart) {
+    repetitions++;
+    isMovingToStart = false;
+    lastUpdateTime = currentTime;
 
-      if (repetitions >= totalReps) {
-        repetitions = 0;
-        currentSet++;
-        if (currentSet > totalSets) {
-          // Finish the exercise
-          enqueueInstruction("Übung abgeschlossen!", "/completion.mp3");
-        } else {
-          enqueueInstruction(`Satz ${currentSet} abgeschlossen!`, "/set_completed.mp3");
-        }
+    if (repetitions >= totalReps) {
+      repetitions = 0;
+      currentSet++;
+
+      if (currentSet > totalSets) {
+        // Finish the exercise and navigate to the finished page
+        enqueueInstruction("Übung abgeschlossen!", "/completion.mp3");
+        goto("/finished"); // Navigate to the finished page
+      } else {
+        enqueueInstruction(`Satz ${currentSet} abgeschlossen!`, "/set_completed.mp3");
       }
     }
-    lastAngle = angle;
   }
+  lastAngle = angle;
+}
 
   function drawLandmarks(
     context: CanvasRenderingContext2D,
@@ -188,6 +195,10 @@
 
     repetitionsDisplay.style.height = `${boundedProgress}%`;
   }
+
+  function cancelExercise() {
+    goto("/exercise"); // Navigate back to the exercise page
+  }
 </script>
 
 <main>
@@ -223,112 +234,175 @@
       </button>
     </div>
   </div>
+  
   <div class="set-rep-display">
     <div class="set-rep-progress" id="repetitions_display">
-      <div class="set-rep-text">
-        <p>Set {currentSet}</p>
-        <p>Reps {repetitions}</p>
-      </div>
+      <!-- Progress bar content goes here -->
+    </div>
+    
+    <div class="set-rep-text">
+      <p>Set {currentSet}</p>
+      <p>Reps {repetitions}</p>
     </div>
   </div>
-  <div id="loading">Loading...</div>
+  
+  <div class="button-container">
+    <button class="button cancel-button" on:click={cancelExercise}>Abbruch</button>
+  </div>
+  
   <video id="input_video" width="640" height="480" autoplay muted loop playsinline style="display: none;"></video>
   <canvas id="output_canvas" width="640" height="480" style="display: none;"></canvas>
 </main>
 
 <style>
   main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-    font-family: "SF Pro", sans-serif;
-    background-color: #fafffe;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  margin: 0;
+  font-family: "SF Pro", sans-serif;
+  background-color: #fafffe;
+  padding: 1em;
+  box-sizing: border-box;
+}
 
-  .instruction-container {
-    display: flex;
-    flex-direction: column;
-    width: 350px;
-    padding: 20px;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    border-radius: 20px;
-    background: var(--Wei, #fff);
-    box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-  }
+.instruction-container {
+  position: absolute;
+  top: 1em;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  width: 20em;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.1);
+  z-index: 3;
+}
 
-  .instruction-text {
-    text-align: center;
-    font-size: 1.2em;
-    margin-bottom: 10px;
-  }
+.instruction-text {
+  text-align: center;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
 
-  .icon-container {
-    display: flex;
-    gap: 30px;
-  }
+.icon-container {
+  display: flex;
+  gap: 30px;
+}
 
-  .icon-container button {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-  }
+.icon-container button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
 
-  .icon-container img.active {
-    filter: brightness(0) saturate(100%) invert(47%) sepia(78%) saturate(1007%)
-      hue-rotate(116deg) brightness(101%) contrast(89%);
-  }
+.icon-container img.active {
+  filter: brightness(0) saturate(100%) invert(47%) sepia(78%) saturate(1007%) hue-rotate(116deg) brightness(101%) contrast(89%);
+}
 
-  .highlight {
-    filter: brightness(0) saturate(100%) invert(47%) sepia(78%) saturate(1007%)
-      hue-rotate(116deg) brightness(101%) contrast(89%);
-  }
+.highlight {
+  filter: brightness(0) saturate(100%) invert(47%) sepia(78%) saturate(1007%) hue-rotate(116deg) brightness(101%) contrast(89%);
+}
 
-  .set-rep-display {
-    position: relative;
-    width: 350px; /* same as the instruction container */
-    height: 360px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 20px;
-    background: #fff;
-    box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.1);
-  }
+.set-rep-display {
+  width: 19.5em;
+  min-height: 350px;
+  position: relative;
+  margin-top: 14em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 20px;
+  z-index: 2;
+}
 
-  .set-rep-progress {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background: #00c896;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 0;
-  }
+.set-rep-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #00c896;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
 
-  .set-rep-text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    color: var(--Schwarz, #343434);
-    font-size: 64px;
-    font-weight: 500;
-  }
+.set-rep-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  color: #000000;
+  font-size: 4em;
+  font-weight: bold;
+  z-index: 2;
+}
 
-  .set-rep-text p {
-    margin: 0;
-    line-height: normal;
-  }
+.set-rep-text p {
+  margin: 0;
+  line-height: normal;
+}
+
+.button-container {
+  position: absolute;
+  bottom: 2em;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+}
+
+.button {
+  display: flex;
+  width: 22em;
+  height: 46px;
+  padding: 8px 144px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  border-radius: 100px;
+  background: #fff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.10);
+  border: none;
+  cursor: pointer;
+  font-family: "SF Pro", sans-serif;
+  font-size: 1em;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #343434;
+}
+
+.cancel-button {
+  background-color: #ffffff;
+  color: #d04121;
+  border: 2px solid #d04121;
+}
+
+#input_video,
+#output_canvas {
+  display: none;
+}
+
 </style>
