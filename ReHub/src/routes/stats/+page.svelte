@@ -7,9 +7,6 @@
 
   Chart.register(...registerables);
 
-  /**
-   * @type {string | any[]}
-   */
   let exerciseData = [];
   let chartData = {
     labels: [],
@@ -37,8 +34,10 @@
   });
 
   function updateChartData() {
-    chartData.labels = currentSet.repsData.map((_, i) => `Rep ${i + 1}`);
-    chartData.datasets[0].data = currentSet.repsData;
+    if (currentSet.repsData.length > 0) {
+      chartData.labels = currentSet.repsData.map((_, i) => `Rep ${i + 1}`);
+      chartData.datasets[0].data = currentSet.repsData;
+    }
   }
 
   function nextSet() {
