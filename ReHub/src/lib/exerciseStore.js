@@ -15,14 +15,10 @@ export const exerciseStore = writable([
 ]);
 
 // Funktion zum Hinzufügen der Winkelmessung zu einem Satz
-/**
- * @param {number} exerciseIndex
- * @param {number} setIndex
- * @param {number} repData
- */
 export function addRepDataToSet(exerciseIndex, setIndex, repData) {
   exerciseStore.update(exercises => {
     exercises[exerciseIndex].sets[setIndex].repsData.push(repData);
+    console.log(`Daten hinzugefügt: ${repData}, zu Satz: ${setIndex + 1}`); // Debugging-Anweisung
     return exercises;
   });
 }

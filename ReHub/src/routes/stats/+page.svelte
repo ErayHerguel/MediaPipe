@@ -25,6 +25,7 @@
 
   onMount(() => {
     exerciseStore.subscribe(data => {
+      console.log("Abgerufene Daten:", data); // Debugging-Anweisung
       exerciseData = data;
       if (exerciseData.length > 0) {
         currentSet = exerciseData[0].sets[currentSetIndex];
@@ -34,9 +35,14 @@
   });
 
   function updateChartData() {
+    console.log("Aktueller Satz:", currentSet); // Debugging-Anweisung
     if (currentSet.repsData.length > 0) {
       chartData.labels = currentSet.repsData.map((_, i) => `Rep ${i + 1}`);
       chartData.datasets[0].data = currentSet.repsData;
+    } else {
+      chartData.labels = [];
+      chartData.datasets[0].data = [];
+      console.log("Keine Daten für den aktuellen Satz");
     }
   }
 
