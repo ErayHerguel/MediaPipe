@@ -1,15 +1,23 @@
 <script>
+  import { goto } from '$app/navigation';
   export let currentPage = "dashboard";
+
+  /**
+   * @param {string | URL} path
+   */
+  function navigateTo(path) {
+    goto(path);
+  }
 </script>
 
 <div class="app-bar">
-  <div class="icon {currentPage === 'dashboard' ? 'active' : ''}">
+  <div class="icon {currentPage === 'dashboard' ? 'active' : ''}" on:click={() => navigateTo('/')}>
     <img src="/SF_Run.svg" alt="Run Icon" />
   </div>
-  <div class="icon {currentPage === 'stats' ? 'active' : ''}">
+  <div class="icon {currentPage === 'stats' ? 'active' : ''}" on:click={() => navigateTo('/stats')}>
     <img src="/SF_Stats.svg" alt="Stats Icon" />
   </div>
-  <div class="icon {currentPage === 'settings' ? 'active' : ''}">
+  <div class="icon {currentPage === 'settings' ? 'active' : ''}" on:click={() => navigateTo('/settings')}>
     <img src="/SF_Settings.svg" alt="Settings Icon" />
   </div>
 </div>
