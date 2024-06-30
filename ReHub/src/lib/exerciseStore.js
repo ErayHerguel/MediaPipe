@@ -5,9 +5,24 @@ export const exerciseStore = writable([
     title: 'Beinstrecker',
     gif: '',
     instructions: '',
-    sets: 1,
-    reps: 12,
-    repsData: [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75] // Beispiel-Daten für die Wiederholungen
+    sets: [
+      { reps: 12, repsData: [] }, // Satz 1
+      { reps: 12, repsData: [] }, // Satz 2
+      { reps: 12, repsData: [] }  // Satz 3
+    ]
   },
   // Weitere Übungen können hier hinzugefügt werden
 ]);
+
+// Funktion zum Hinzufügen der Winkelmessung zu einem Satz
+/**
+ * @param {number} exerciseIndex
+ * @param {number} setIndex
+ * @param {number} repData
+ */
+export function addRepDataToSet(exerciseIndex, setIndex, repData) {
+  exerciseStore.update(exercises => {
+    exercises[exerciseIndex].sets[setIndex].repsData.push(repData);
+    return exercises;
+  });
+}

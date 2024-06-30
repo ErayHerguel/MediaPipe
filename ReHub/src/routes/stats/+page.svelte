@@ -3,8 +3,8 @@
   import { exerciseStore } from '../../lib/exerciseStore';
   import { Line } from 'svelte-chartjs';
   import { Chart, registerables } from 'chart.js';
-  import AppBar from '../../lib/AppBar.svelte'; // Importiere die AppBar
-  
+  import AppBar from '../../lib/AppBar.svelte';
+
   Chart.register(...registerables);
 
   /**
@@ -15,7 +15,7 @@
     labels: [],
     datasets: [
       {
-        label: 'Grad pro Wiederholung',
+        label: 'Winkel pro Wiederholung',
         data: [],
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1
@@ -23,35 +23,58 @@
     ]
   };
 
+  let currentSetIndex = 0;
+  let currentSet = {};
+
   onMount(() => {
     exerciseStore.subscribe(data => {
       exerciseData = data;
       if (exerciseData.length > 0) {
-        let exercise = exerciseData[0]; // Beispiel für eine Übung
-        chartData.labels = exercise.repsData.map((_, i) => `Rep ${i + 1}`);
-        chartData.datasets[0].data = exercise.repsData;
+        currentSet = exerciseData[0].sets[currentSetIndex];
+        updateChartData();
       }
     });
   });
+
+  function updateChartData() {
+    chartData.labels = currentSet.repsData.map((_, i) => `Rep ${i + 1}`);
+    chartData.datasets[0].data = currentSet.repsData;
+  }
+
+  function nextSet() {
+    if (currentSetIndex < exerciseData[0].sets.length - 1) {
+      currentSetIndex++;
+      currentSet = exerciseData[0].sets[currentSetIndex];
+      updateChartData();
+    }
+  }
+
+  function previousSet() {
+    if (currentSetIndex > 0) {
+      currentSetIndex--;
+      currentSet = exerciseData[0].sets[currentSetIndex];
+      updateChartData();
+    }
+  }
 </script>
 
 <style>
   * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box; /* Ensure that padding and border are included in the element's total width and height */
+    box-sizing: border-box;
     font-family: 'SF Pro', sans-serif;
   }
 
   body {
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-x: hidden;
   }
 
   .container {
-    width: 100%; /* Ensure it takes full width of the viewport */
-    max-width: 390px; /* Set to iPhone 12 viewport width */
+    width: 100%;
+    max-width: 390px;
     background: #fafffe;
-    padding: 0; /* Adjust padding to remove left and right margins */
+    padding: 0;
     box-sizing: border-box;
     margin: 0 auto;
     display: flex;
@@ -72,11 +95,11 @@
     height: 48px;
     margin-bottom: 12px;
   }
-  
+
   .date-switcher-container {
     overflow-x: auto;
     white-space: nowrap;
-    padding-bottom: 10px; /* Optional, to ensure space for scrollbar */
+    padding-bottom: 10px;
     width: 110%;
   }
 
@@ -84,8 +107,8 @@
     margin-top: 20px;
     margin-bottom: 8px;
     display: inline-flex;
-    gap: 20px; /* Adjust gap for smaller screens */
-    padding: 0 16px; /* Ensure padding within the container */
+    gap: 20px;
+    padding: 0 16px;
   }
 
   .date-switcher button {
@@ -125,7 +148,7 @@
     margin-top: 20px;
   }
 
-  .chart-container h2{
+  .chart-container h2 {
     font-size: 16px;
   }
 
@@ -187,7 +210,9 @@
   {#if exerciseData.length > 0}
     <div class="chart-container">
       <h2>{exerciseData[0].title}</h2>
+      <button on:click={previousSet}>&lt; Satz {currentSetIndex + 1}</button>
       <Line {chartData} />
+      <button on:click={nextSet}>Satz {currentSetIndex + 1} &gt;</button>
     </div>
   {/if}
 
