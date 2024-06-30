@@ -65,7 +65,7 @@
       class="task"
       on:click={() =>
         openExercise({
-          title: "Suads",
+          title: "Squads",
           gif: "/path/to/gif.gif",
           instructions:
             "Machen Sie Kniebeugen mit geradem Rücken und parallelen Füßen",
@@ -74,9 +74,9 @@
         })}
     >
       <div class="exercise-info">
-        <img src="/Squats.png" alt="Suads" class="exercise-image" />
+        <img src="/Squats.png" alt="Squads" class="exercise-image" />
         <div>
-          <p>Suads</p>
+          <p>Squads</p>
           <p><span>12 x 3 Wiederholungen</span></p>
           <p><span>Nachmittag</span></p>
         </div>
