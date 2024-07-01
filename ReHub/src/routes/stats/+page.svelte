@@ -63,6 +63,7 @@
   }
 </script>
 
+
 <style>
   * {
     margin: 0;
@@ -147,34 +148,97 @@
     font-size: 16px;
   }
 
-  .chart-container {
-    width: 100%;
-    max-width: 390px;
-    margin-top: 20px;
+  .points {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2em;
   }
 
-  .chart-container h2 {
-    font-size: 16px;
+  .one, .two, .three {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    border-radius: 100px;
+    margin-right: 1.5em;
+  }
+
+  .one {
+    background: var(--Rehub, #00E6BD);
+  }
+
+  .two, .three {
+    background: var(--Rehub, #999);
+  }
+
+  .task-list {
+    width: calc(100% - 24px);
+    padding: 1em;
+    background: #ffffff;
+    font-family: "SF Pro", sans-serif;
+    box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .exercise {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 0px; 
   }
 
   .title {
-    margin-left: 20px;
-    margin-top: 12px;
-    margin-bottom: 8px;
+    margin: 0em 20px;
     color: var(--Schwarz, #343434);
     font-size: 16px;
+    font-family: "SF Pro", sans-serif;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
   }
 
-  .task-list {
-    width: 100%;
-    padding: 12px;
-    background: #ffffff;
-    box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
-    margin-bottom: 20px;
+  .skip-l, .skip-r {
+    display: flex;
+    align-items: center;
+    color: var(--Schwarz, #343434);
+    font-family: "SF Pro";
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    cursor: pointer;
+    padding-bottom: 1px;
+  }
+
+  .skip-l {
+    margin-left: 5.5em;
+  }
+
+  .skip-r {
+    margin-right: 0.5em;
+  }
+
+  .sets {
+    color: var(--Schwarz, #343434);
+    margin: 0 0px;
+    font-size: 16px;
+    font-family: "SF Pro", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .stats-image {
+    text-align: center;
+    margin-top: 0px;
+  }
+
+  .stats-image img {
+    max-width: 100%;
+    height: auto;
   }
 
   .no-task-title {
@@ -199,11 +263,13 @@
   }
 </style>
 
+
 <div class="container">
   <div class="header">
-    <img src="/Rehub.svg" alt="Logo" />
+    <img src="/Rehub.svg" alt="Logo" style="height: 48px; margin-bottom: 12px; margin-top: 60px; margin-left: 16px;" />
+    <div>
+    </div>
   </div>
-  
   <div class="date-switcher-container">
     <div class="date-switcher">
       <button class="inactive">Gestern</button>
@@ -211,19 +277,24 @@
       <button class="inactive">Morgen</button>
     </div>
   </div>
-
-  {#if exerciseData.length > 0}
-    <div class="chart-container">
-      <h2>{exerciseData[0].title}</h2>
-      <button on:click={previousSet}>&lt; Satz {currentSetIndex + 1}</button>
-      <Line {chartData} />
-      <button on:click={nextSet}>Satz {currentSetIndex + 1} &gt;</button>
-    </div>
-  {/if}
-
-  <div class="task-list">
-    <p class="no-task-title">Keine weiteren Übungen erledigt</p>
+  <div class="exercise">
+    <div class="title">Beinstrecker</div>
+    <div class="skip-l" on:click={previousSet}>&lt;</div>
+    <div class="sets">Satz {currentSetIndex + 1}</div>
+    <div class="skip-r" on:click={nextSet}>&gt;</div>
   </div>
+  <div class="stats-image">
+    <Line {chartData} />
+  </div>
+</div>
+<div class="points">
+  <div class="one"></div>
+  <div class="two"></div>
+  <div class="three"></div>
+</div>
+<div class="task-list">
+  <p class="no-task-title">Keine weiteren Übungen erledigt</p>
 </div>
 
 <AppBar currentPage="stats" />
+

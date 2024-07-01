@@ -1,4 +1,5 @@
 <script>
+
   import { goto } from '$app/navigation';
   export let currentPage = "dashboard";
 
@@ -11,6 +12,7 @@
 </script>
 
 <div class="app-bar">
+
   <div class="icon {currentPage === 'dashboard' ? 'active' : ''}" on:click={() => navigateTo('/')}>
     <img src="/SF_Run.svg" alt="Run Icon" />
   </div>

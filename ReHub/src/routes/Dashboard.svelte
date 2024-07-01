@@ -65,7 +65,7 @@
       class="task"
       on:click={() =>
         openExercise({
-          title: "Suads",
+          title: "Squads",
           gif: "/path/to/gif.gif",
           instructions:
             "Machen Sie Kniebeugen mit geradem Rücken und parallelen Füßen",
@@ -74,9 +74,9 @@
         })}
     >
       <div class="exercise-info">
-        <img src="/Squats.png" alt="Suads" class="exercise-image" />
+        <img src="/Squats.png" alt="Squads" class="exercise-image" />
         <div>
-          <p>Suads</p>
+          <p>Squads</p>
           <p><span>12 x 3 Wiederholungen</span></p>
           <p><span>Nachmittag</span></p>
         </div>
@@ -147,7 +147,7 @@
     background: #fafffe;
     padding: 0; /* Adjust padding to remove left and right margins */
     box-sizing: border-box;
-    margin: 0 auto;
+    margin-top: 1.4em;
   }
   .header {
     display: flex;
@@ -166,6 +166,7 @@
     overflow-x: auto;
     white-space: nowrap;
     padding-bottom: 10px; /* Optional, to ensure space for scrollbar */
+    margin-bottom: 2em;
   }
   .date-switcher {
     margin-top: 20px;
