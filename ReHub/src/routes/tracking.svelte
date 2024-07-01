@@ -96,6 +96,12 @@
             height: 480,
           });
           camera.start();
+
+          // Initial instruction
+          enqueueInstruction(
+            "Setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.",
+            "Anweisung_1",
+          );
         })
         .catch((error) => {
           console.error("Fehler beim Zugriff auf die Kamera:", error);
@@ -104,12 +110,6 @@
     } else {
       alert("getUserMedia ist in diesem Browser nicht verfügbar.");
     }
-
-    // Initiale Anweisung
-    enqueueInstruction(
-      "Setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.",
-      "Anweisung_1",
-    );
   });
 
   function onResults(results: any) {
@@ -181,6 +181,8 @@
     return angle;
   }
 
+  let isPauseSoundPlaying = false;
+
   function checkRepetition(angle: number) {
     const currentTime = Date.now();
     if (currentTime - lastUpdateTime < debounceTime) return;
@@ -203,7 +205,19 @@
           enqueueInstruction("Übung abgeschlossen!", "completion");
           goto("/finished"); // Navigate to the finished page
         } else {
-          enqueueInstruction(`Satz ${currentSet} abgeschlossen!`, "pause");
+          // Play the pause sound between sets if not already playing
+          if (!isPauseSoundPlaying) {
+            isPauseSoundPlaying = true;
+            const audio = new Audio(sounds["pause"]);
+            audio.play();
+            audio.onended = () => {
+              isPauseSoundPlaying = false;
+              enqueueInstruction(
+                `Satz ${currentSet} abgeschlossen!`,
+                "Anweisung_2",
+              );
+            };
+          }
         }
       }
     }
