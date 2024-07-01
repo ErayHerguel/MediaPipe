@@ -38,7 +38,8 @@
   {#if currentPage === "exercise"}
     <ExercisePage />
   {/if}
-  {#if currentPage === "settings"}{/if}
+  {#if currentPage === 'settings'}
+  {/if}
 </main>
 
 <AppBar {currentPage} />

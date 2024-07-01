@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { exerciseStore } from "../../lib/exerciseStore";
+  import { exerciseStore } from "../../lib/exerciseStore"; 
   import { goto } from "$app/navigation";
   import { get } from "svelte/store";
 
@@ -16,7 +16,7 @@
   });
 
   function goBack() {
-    goto("/");
+    goto("/"); 
   }
 
   async function startExercise() {
@@ -132,8 +132,10 @@
     height: auto;
     border-radius: 10px;
     object-fit: cover;
-    object-position: center;
-    clip-path: inset(20% 20% 10% 10%);
+    object-position: center; 
+    clip-path: inset(
+      20% 20% 10% 10%
+    );
   }
 
   .content-block p {

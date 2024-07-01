@@ -8,7 +8,7 @@
     }, 3000);
 
     return () => {
-      clearTimeout(timer);
+      clearTimeout(timer); 
     };
   });
 

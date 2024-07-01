@@ -133,7 +133,9 @@
     border-radius: 10px;
     object-fit: cover;
     object-position: center;
-    clip-path: inset(20% 20% 10% 10%);
+    clip-path: inset(
+      20% 20% 10% 10%
+    );
   }
 
   .content-block p {

@@ -1,4 +1,3 @@
-// src/mediapipe.d.ts
 declare module '@mediapipe/pose' {
   export class Pose {
     constructor(config: { locateFile: (path: string) => string });
