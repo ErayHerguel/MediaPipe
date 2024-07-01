@@ -3,8 +3,8 @@
   import { exerciseStore } from "../lib/exerciseStore";
 
   function openExercise(exercise) {
-    exerciseStore.set(exercise); // Set the exercise data in the store
-    goto("/exercise"); // Navigate to the exercise page
+    exerciseStore.set(exercise);
+    goto("/exercise"); 
   }
 </script>
 
@@ -16,7 +16,6 @@
       style="height: 48px; margin-bottom: 12px; margin-top: 60px; margin-left: 16px;"
     />
     <div>
-      <!-- Add any header icons here -->
     </div>
   </div>
   <div class="date-switcher-container">
@@ -134,18 +133,18 @@
   * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box; /* Ensure that padding and border are included in the element's total width and height */
+    box-sizing: border-box;
   }
 
   body {
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-x: hidden;
   }
 
   .container {
-    width: 100%; /* Ensure it takes full width of the viewport */
-    max-width: 390px; /* Set to iPhone 12 viewport width */
+    width: 100%; 
+    max-width: 390px;
     background: #fafffe;
-    padding: 0; /* Adjust padding to remove left and right margins */
+    padding: 0; 
     box-sizing: border-box;
     margin-top: 1.4em;
   }
@@ -156,7 +155,7 @@
     margin-top: -120px;
   }
   .header-text {
-    font-size: 36px; /* Adjust font size for smaller screens */
+    font-size: 36px;
     color: var(--Akzentfarbe, #343434);
     font-family: "SF Pro", sans-serif;
     font-weight: 590;
@@ -165,15 +164,15 @@
   .date-switcher-container {
     overflow-x: auto;
     white-space: nowrap;
-    padding-bottom: 10px; /* Optional, to ensure space for scrollbar */
+    padding-bottom: 10px;
     margin-bottom: 2em;
   }
   .date-switcher {
     margin-top: 20px;
     margin-bottom: 8px;
     display: inline-flex;
-    gap: 20px; /* Adjust gap for smaller screens */
-    padding: 0 16px; /* Ensure padding within the container */
+    gap: 20px;
+    padding: 0 16px;
   }
   .date-switcher button {
     display: flex;
@@ -204,7 +203,7 @@
     font-size: 16px;
   }
   .task-list {
-    width: calc(100% - 24px); /* Adjust width to fit within the container */
+    width: calc(100% - 24px);
     padding: 12px;
     background: #ffffff;
     box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.1);
@@ -218,12 +217,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%; /* Make task full width */
-    margin-bottom: 12px; /* Add margin to create space between tasks */
+    width: 100%;
+    margin-bottom: 12px;
     cursor: pointer;
   }
   .task:last-child {
-    margin-bottom: 0; /* Remove margin from the last task */
+    margin-bottom: 0;
   }
   .task p {
     margin: 0;
@@ -273,7 +272,7 @@
 
   @media (max-width: 390px) {
     .header-text {
-      font-size: 24px; /* Adjust the size for smaller screens */
+      font-size: 24px;
     }
     .date-switcher {
       width: auto;

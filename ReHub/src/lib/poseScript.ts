@@ -1,9 +1,7 @@
-// src/lib/poseScript.ts
 
 import { Pose, POSE_CONNECTIONS } from '@mediapipe/pose';
 import { Camera } from '@mediapipe/camera_utils';
 
-// Initialisiere Variablen für den Status der Wiederholungen
 let lastAngle = 0;
 let lastUpdateTime = 0;
 let isMovingToStart = false;
@@ -23,7 +21,7 @@ export function initialize(
   const progressBar = document.getElementById(progressBarId) as HTMLDivElement;
   const angleDisplay = document.getElementById(angleDisplayId) as HTMLDivElement;
   const repetitionsDisplay = document.getElementById(repetitionsDisplayId) as HTMLDivElement;
-  const messageElement = document.getElementById(messageId) as HTMLDivElement; // Hier sicherstellen, dass messageElement korrekt definiert ist
+  const messageElement = document.getElementById(messageId) as HTMLDivElement;
 
   if (!videoElement || !canvasElement || !progressBar || !angleDisplay || !repetitionsDisplay || !messageElement) {
     console.error("Ein oder mehrere DOM-Elemente konnten nicht gefunden werden.");
@@ -81,7 +79,7 @@ function onResults(
   angleDisplay: HTMLDivElement,
   repetitionsDisplay: HTMLDivElement,
   progressBar: HTMLDivElement,
-  messageElement: HTMLDivElement // Hier sicherstellen, dass messageElement korrekt übergeben wird
+  messageElement: HTMLDivElement
 ): void {
   if (!canvasElement || !canvasCtx) {
     console.error("Canvas-Element oder Kontext ist nicht verfügbar.");

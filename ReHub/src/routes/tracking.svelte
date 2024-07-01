@@ -28,7 +28,7 @@
   let userInstruction = writable(
     "Setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.",
   );
-  let activeIcon = writable("high"); // Default to high volume
+  let activeIcon = writable("high");
 
   const sounds = {
     Anweisung_1: "/Anweisung_1.mp3",
@@ -97,7 +97,6 @@
           });
           camera.start();
 
-          // Initial instruction
           enqueueInstruction(
             "Setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.",
             "Anweisung_1",
@@ -137,7 +136,6 @@
       const knee = results.poseLandmarks[25];
       const ankle = results.poseLandmarks[27];
 
-      // Wenn der ganze Körper erkannt wird
       if (
         hip.visibility > 0.6 &&
         knee.visibility > 0.6 &&
@@ -195,7 +193,7 @@
       isMovingToStart = false;
       lastUpdateTime = currentTime;
 
-      addRepDataToSet(0, currentSet - 1, angle); // Speichert den Winkel in den exerciseStore
+      addRepDataToSet(0, currentSet - 1, angle);
 
       if (repetitions >= totalReps) {
         repetitions = 0;
@@ -203,9 +201,8 @@
         if (currentSet > totalSets) {
           // Finish the exercise
           enqueueInstruction("Übung abgeschlossen!", "completion");
-          goto("/finished"); // Navigate to the finished page
+          goto("/finished");
         } else {
-          // Play the pause sound between sets if not already playing
           if (!isPauseSoundPlaying) {
             isPauseSoundPlaying = true;
             const audio = new Audio(sounds["pause"]);
@@ -275,7 +272,7 @@
   }
 
   function cancelExercise() {
-    goto("/exercise"); // Navigate back to the exercise page
+    goto("/exercise");
   }
 </script>
 
@@ -323,7 +320,6 @@
 
   <div class="set-rep-display">
     <div class="set-rep-progress" id="repetitions_display">
-      <!-- Progress bar content goes here -->
     </div>
 
     <div class="set-rep-text">

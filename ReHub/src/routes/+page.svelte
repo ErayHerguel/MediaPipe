@@ -31,7 +31,6 @@
     <ExercisePage />
   {/if}
   {#if currentPage === 'settings'}
-    <!-- Settings-Komponente hier hinzufügen -->
   {/if}
 </main>
 
