@@ -26,9 +26,9 @@
   let bodyDetected = false;
 
   let userInstruction = writable(
-    "Setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.",
+    "Setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann."
   );
-  let activeIcon = writable("high"); // Default to high volume
+  let activeIcon = writable("high");
 
   const sounds = {
     Anweisung_1: "/Anweisung_1.mp3",
@@ -60,12 +60,12 @@
   onMount(() => {
     videoElement = document.getElementById("input_video") as HTMLVideoElement;
     canvasElement = document.getElementById(
-      "output_canvas",
+      "output_canvas"
     ) as HTMLCanvasElement;
     canvasCtx = canvasElement.getContext("2d") as CanvasRenderingContext2D;
 
     repetitionsDisplay = document.getElementById(
-      "repetitions_display",
+      "repetitions_display"
     ) as HTMLDivElement;
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -97,10 +97,9 @@
           });
           camera.start();
 
-          // Initial instruction
           enqueueInstruction(
             "Setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.",
-            "Anweisung_1",
+            "Anweisung_1"
           );
         })
         .catch((error) => {
@@ -120,7 +119,7 @@
       0,
       0,
       canvasElement.width,
-      canvasElement.height,
+      canvasElement.height
     );
 
     if (results.poseLandmarks) {
@@ -137,7 +136,6 @@
       const knee = results.poseLandmarks[25];
       const ankle = results.poseLandmarks[27];
 
-      // Wenn der ganze Körper erkannt wird
       if (
         hip.visibility > 0.6 &&
         knee.visibility > 0.6 &&
@@ -195,17 +193,15 @@
       isMovingToStart = false;
       lastUpdateTime = currentTime;
 
-      addRepDataToSet(0, currentSet - 1, angle); // Speichert den Winkel in den exerciseStore
+      addRepDataToSet(0, currentSet - 1, angle);
 
       if (repetitions >= totalReps) {
         repetitions = 0;
         currentSet++;
         if (currentSet > totalSets) {
-          // Finish the exercise
           enqueueInstruction("Übung abgeschlossen!", "completion");
-          goto("/finished"); // Navigate to the finished page
+          goto("/finished");
         } else {
-          // Play the pause sound between sets if not already playing
           if (!isPauseSoundPlaying) {
             isPauseSoundPlaying = true;
             const audio = new Audio(sounds["pause"]);
@@ -214,7 +210,7 @@
               isPauseSoundPlaying = false;
               enqueueInstruction(
                 `Satz ${currentSet} abgeschlossen!`,
-                "Anweisung_2",
+                "Anweisung_2"
               );
             };
           }
@@ -227,7 +223,7 @@
   function drawLandmarks(
     context: CanvasRenderingContext2D,
     landmarks: any[],
-    style: any = {},
+    style: any = {}
   ) {
     context.fillStyle = style.color || "white";
     landmarks.forEach((landmark) => {
@@ -237,7 +233,7 @@
         landmark.y * canvasElement.height,
         style.size || 3,
         0,
-        2 * Math.PI,
+        2 * Math.PI
       );
       context.fill();
     });
@@ -247,7 +243,7 @@
     context: CanvasRenderingContext2D,
     landmarks: any[],
     connections: any[],
-    style: any = {},
+    style: any = {}
   ) {
     context.strokeStyle = style.color || "white";
     context.lineWidth = style.lineWidth || 2;
@@ -257,7 +253,7 @@
       context.beginPath();
       context.moveTo(
         start.x * canvasElement.width,
-        start.y * canvasElement.height,
+        start.y * canvasElement.height
       );
       context.lineTo(end.x * canvasElement.width, end.y * canvasElement.height);
       context.stroke();
@@ -275,7 +271,7 @@
   }
 
   function cancelExercise() {
-    goto("/exercise"); // Navigate back to the exercise page
+    goto("/exercise");
   }
 </script>
 
@@ -322,9 +318,7 @@
   </div>
 
   <div class="set-rep-display">
-    <div class="set-rep-progress" id="repetitions_display">
-      <!-- Progress bar content goes here -->
-    </div>
+    <div class="set-rep-progress" id="repetitions_display"></div>
 
     <div class="set-rep-text">
       <p>Set {currentSet}</p>

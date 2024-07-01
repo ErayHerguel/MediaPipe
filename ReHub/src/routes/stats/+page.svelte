@@ -69,7 +69,7 @@
   .date-switcher-container {
     overflow-x: auto;
     white-space: nowrap;
-    padding-bottom: 10px; /* Optional, to ensure space for scrollbar */
+    padding-bottom: 10px;
     margin-bottom: 2em;
     margin-top: 1px;
   }

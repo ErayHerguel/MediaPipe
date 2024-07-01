@@ -8,7 +8,7 @@
     }, 3000);
 
     return () => {
-      clearTimeout(timer); // Clear timeout if the component is destroyed before the timeout completes
+      clearTimeout(timer);
     };
   });
 
@@ -16,6 +16,11 @@
     goto("/dashboard");
   }
 </script>
+
+<main>
+  <img src="/finished.png" alt="Finished Icon" class="icon" />
+  <div class="message">Geschafft!</div>
+</main>
 
 <style>
   main {
@@ -41,8 +46,3 @@
     text-align: center;
   }
 </style>
-
-<main>
-  <img src="/finished.png" alt="Finished Icon" class="icon" />
-  <div class="message">Geschafft!</div>
-</main>

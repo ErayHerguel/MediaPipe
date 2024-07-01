@@ -1,6 +1,5 @@
 <script>
-    import Tracking from '../../routes/tracking.svelte';
-  </script>
-  
-  <Tracking />
-  
+  import Tracking from "../../routes/tracking.svelte";
+</script>
+
+<Tracking />

@@ -1,38 +1,44 @@
 <script>
-  import { page } from '$app/stores';
-  import Dashboard from './Dashboard.svelte';
-  import Stats from './stats/+page.svelte';
-  import ExercisePage from './exercise/+page.svelte';
-  import AppBar from '../lib/AppBar.svelte';
-  import { onMount } from 'svelte';
+  import { page } from "$app/stores";
+  import Dashboard from "./Dashboard.svelte";
+  import Stats from "./stats/+page.svelte";
+  import ExercisePage from "./exercise/+page.svelte";
+  import AppBar from "../lib/AppBar.svelte";
+  import { onMount } from "svelte";
 
-  let currentPage = 'dashboard';
-  $: currentPage = $page.url.pathname === '/stats' ? 'stats' :
-                   $page.url.pathname === '/exercise' ? 'exercise' :
-                   $page.url.pathname === '/settings' ? 'settings' :
-                   'dashboard';
+  let currentPage = "dashboard";
+  $: currentPage =
+    $page.url.pathname === "/stats"
+      ? "stats"
+      : $page.url.pathname === "/exercise"
+        ? "exercise"
+        : $page.url.pathname === "/settings"
+          ? "settings"
+          : "dashboard";
 
   onMount(() => {
-    currentPage = $page.url.pathname === '/stats' ? 'stats' :
-                  $page.url.pathname === '/exercise' ? 'exercise' :
-                  $page.url.pathname === '/settings' ? 'settings' :
-                  'dashboard';
+    currentPage =
+      $page.url.pathname === "/stats"
+        ? "stats"
+        : $page.url.pathname === "/exercise"
+          ? "exercise"
+          : $page.url.pathname === "/settings"
+            ? "settings"
+            : "dashboard";
   });
 </script>
 
 <main>
-  {#if currentPage === 'dashboard'}
+  {#if currentPage === "dashboard"}
     <Dashboard />
   {/if}
-  {#if currentPage === 'stats'}
+  {#if currentPage === "stats"}
     <Stats />
   {/if}
-  {#if currentPage === 'exercise'}
+  {#if currentPage === "exercise"}
     <ExercisePage />
   {/if}
-  {#if currentPage === 'settings'}
-    <!-- Settings-Komponente hier hinzufügen -->
-  {/if}
+  {#if currentPage === "settings"}{/if}
 </main>
 
 <AppBar {currentPage} />

@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { exerciseStore } from "../../lib/exerciseStore"; // Korrigiere den Pfad
+  import { exerciseStore } from "../../lib/exerciseStore";
   import { goto } from "$app/navigation";
   import { get } from "svelte/store";
 
@@ -11,24 +11,22 @@
     if (storedExercise) {
       exercise = storedExercise;
     } else {
-      // Set a default gif if none is provided
       exercise.gif = "/exercise.gif";
     }
   });
 
   function goBack() {
-    goto("/"); // navigate back to the dashboard
+    goto("/");
   }
 
   async function startExercise() {
     try {
-      // Create a silent audio to trigger user interaction permission
       const audio = new Audio("/Signal.mp3");
       await audio.play();
       audio.pause();
       audio.currentTime = 0;
 
-      goto("/tracking"); // navigate to the tracking page
+      goto("/tracking");
     } catch (error) {
       console.error("Audio permission error:", error);
       alert("Bitte erlauben Sie die Audiowiedergabe, um fortzufahren.");
@@ -44,7 +42,7 @@
 
   <div class="title">Anleitung</div>
   <div class="content-block">
-    <img src={exercise.gif} alt={exercise.title} />
+    <img src={"/exercise.gif"} alt={exercise.title} />
     <p>{exercise.instructions}</p>
   </div>
 
@@ -63,7 +61,6 @@
   <div class="start-button">
     <button
       on:click={() => {
-        // Direct user interaction to play audio
         const audio = new Audio("/Signal.mp3");
         audio
           .play()
@@ -127,18 +124,16 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.1);
-    overflow: hidden; /* Ensure that the content stays within the rounded borders */
+    overflow: hidden;
   }
 
   .content-block img {
     width: 100%;
     height: auto;
     border-radius: 10px;
-    object-fit: cover; /* Crop the image to fit the container */
-    object-position: center; /* Center the image */
-    clip-path: inset(
-      20% 20% 10% 10%
-    ); /* Adjust these values to crop white space */
+    object-fit: cover;
+    object-position: center;
+    clip-path: inset(20% 20% 10% 10%);
   }
 
   .content-block p {
