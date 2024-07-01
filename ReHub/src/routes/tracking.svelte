@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import posePkg from "@mediapipe/pose";
   import cameraPkg from "@mediapipe/camera_utils";
-  import { writable } from "svelte/store";
+  import { writable, get } from "svelte/store";
   import { goto } from "$app/navigation";
   import { exerciseStore, addRepDataToSet } from "../lib/exerciseStore";
 
@@ -23,15 +23,38 @@
   let currentSet = 1;
   const totalSets = 3;
   const totalReps = 12;
+  let bodyDetected = false;
 
   let userInstruction = writable(
     "Setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.",
   );
   let activeIcon = writable("high"); // Default to high volume
 
-  function enqueueInstruction(text: string, audioFile: string) {
-    const audio = new Audio(audioFile);
-    audio.play();
+  const sounds = {
+    Anweisung_1: "/Anweisung_1.mp3",
+    Anweisung_2: "/Anweisung_2.mp3",
+    Anweisung_Hinten: "/Anweisung_Hinten.mp3",
+    Anweisung_Links: "/Anweisung_Links.mp3",
+    Anweisung_Rechts: "/Anweisung_Rechts.mp3",
+    Anweisung_Vorne: "/Anweisung_Vorne.mp3",
+    completion: "/completion.mp3",
+    pause: "/pause.mp3",
+    signal: "/Signal.mp3",
+  };
+
+  function enqueueInstruction(text: string, soundKey: string) {
+    userInstruction.set(text);
+    const volume = get(activeIcon);
+
+    if (volume === "mute") {
+      return;
+    }
+
+    const audioFile = volume === "medium" ? sounds["signal"] : sounds[soundKey];
+    if (audioFile) {
+      const audio = new Audio(audioFile);
+      audio.play();
+    }
   }
 
   onMount(() => {
@@ -81,6 +104,12 @@
     } else {
       alert("getUserMedia ist in diesem Browser nicht verfügbar.");
     }
+
+    // Initiale Anweisung
+    enqueueInstruction(
+      "Setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.",
+      "Anweisung_1",
+    );
   });
 
   function onResults(results: any) {
@@ -107,10 +136,29 @@
       const hip = results.poseLandmarks[23];
       const knee = results.poseLandmarks[25];
       const ankle = results.poseLandmarks[27];
-      const angle = calculateAngle(hip, knee, ankle);
 
+      // Wenn der ganze Körper erkannt wird
+      if (
+        hip.visibility > 0.6 &&
+        knee.visibility > 0.6 &&
+        ankle.visibility > 0.6 &&
+        !bodyDetected
+      ) {
+        bodyDetected = true;
+        enqueueInstruction("Super, wir können starten.", "Anweisung_2");
+      } else if (
+        hip.visibility <= 0.6 ||
+        knee.visibility <= 0.6 ||
+        ankle.visibility <= 0.6
+      ) {
+        bodyDetected = false;
+      }
+
+      const angle = calculateAngle(hip, knee, ankle);
       checkRepetition(angle);
       updateProgressBar(angle);
+    } else {
+      bodyDetected = false;
     }
     canvasCtx.restore();
   }
@@ -152,13 +200,10 @@
         currentSet++;
         if (currentSet > totalSets) {
           // Finish the exercise
-          enqueueInstruction("Übung abgeschlossen!", "/completion.mp3");
+          enqueueInstruction("Übung abgeschlossen!", "completion");
           goto("/finished"); // Navigate to the finished page
         } else {
-          enqueueInstruction(
-            `Satz ${currentSet} abgeschlossen!`,
-            "/set_completed.mp3",
-          );
+          enqueueInstruction(`Satz ${currentSet} abgeschlossen!`, "pause");
         }
       }
     }
