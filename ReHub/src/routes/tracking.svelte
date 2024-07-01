@@ -5,6 +5,8 @@
   import { writable } from "svelte/store";
   import { goto } from "$app/navigation";
   import { get } from "svelte/store";
+  import { exerciseStore, addRepDataToSet } from '../lib/exerciseStore';
+
 
   const { Pose, POSE_CONNECTIONS } = posePkg;
   const { Camera } = cameraPkg;
@@ -21,11 +23,8 @@
   let repetitions = 0;
   let isMovingToStart = false;
   let currentSet = 1;
-  let totalSets = 3;
-  let totalReps = 12;
-  // const minAngle = 90;
-  // const maxAngle = 180;
-  // let progressPercentage = 0;
+  const totalSets = 3;
+  const totalReps = 12;
 
   let userInstruction = writable("Setzen Sie sich so hin, dass die Kamera Ihren ganzen Körper erkennen kann.");
   let activeIcon = writable("high"); // Default to high volume
@@ -131,16 +130,23 @@
     isMovingToStart = false;
     lastUpdateTime = currentTime;
 
+    addRepDataToSet(0, currentSet - 1, angle); // Speichert den Winkel in den exerciseStore
+
     if (repetitions >= totalReps) {
       repetitions = 0;
       currentSet++;
-
       if (currentSet > totalSets) {
-        // Finish the exercise and navigate to the finished page
+        // Finish the exercise
         enqueueInstruction("Übung abgeschlossen!", "/completion.mp3");
         goto("/finished"); // Navigate to the finished page
       } else {
         enqueueInstruction(`Satz ${currentSet} abgeschlossen!`, "/set_completed.mp3");
+      }
+    }
+  }
+  lastAngle = angle;
+}
+
       }
     }
   }
