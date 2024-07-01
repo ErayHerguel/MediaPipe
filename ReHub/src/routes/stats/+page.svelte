@@ -1,16 +1,13 @@
 <script>
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
-  import AppBar from '../../lib/AppBar.svelte'; // Assuming you have the AppBar component
-
-  // You can keep other necessary imports or logic here
+  import AppBar from '../../lib/AppBar.svelte';
 </script>
 
 <div class="container">
   <div class="header">
     <img src="/Rehub.svg" alt="Logo" style="height: 48px; margin-bottom: 12px; margin-top: 60px; margin-left: 16px;" />
     <div>
-      <!-- Add any header icons here -->
     </div>
   </div>
   <div class="date-switcher-container">
@@ -20,14 +17,23 @@
       <button class="inactive">Morgen</button>
     </div>
   </div>
+  <div class="exercise">
   <div class="title">Beinstrecker</div>
+  <div class="skip-l">&lt;</div>
+  <div class="sets">Satz 1</div>
+  <div class="skip-r">&gt;</div>
+  </div>
   <div class="stats-image">
     <img src="/stats.svg" alt="Stats" />
   </div>
 </div>
-<div class="title">Erledigt</div>
+<div class="points">
+    <div class="one"></div>
+    <div class="two"></div>
+    <div class="three"></div>
+</div>
   <div class="task-list">
-    <p class="no-task-title">Noch keine Übungen erledigt</p>
+    <p class="no-task-title">Keine weiteren Übungen erledigt</p>
   </div>
 
 <AppBar currentPage="stats" />
@@ -58,17 +64,12 @@
     font-weight: 590;
     line-height: normal;
   }
-  .header-text {
-    font-size: 36px;
-    color: var(--Akzentfarbe, #343434);
-    font-family: "SF Pro", sans-serif;
-    font-weight: 590;
-    line-height: normal;
-  }
   .date-switcher-container {
     overflow-x: auto;
     white-space: nowrap;
-    padding-bottom: 10px;
+    padding-bottom: 10px; /* Optional, to ensure space for scrollbar */
+    margin-bottom: 2em;
+    margin-top: 1px;
   }
   .date-switcher {
     margin-top: 20px;
@@ -105,9 +106,38 @@
     color: #343434;
     font-size: 16px;
   }
+  .points {
+    display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 2em;
+  }
+  .one {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    border-radius: 100px;
+    background: var(--Rehub, #00E6BD);
+    margin-right: 1.5em;
+  }
+  .two {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    border-radius: 100px;
+    background: var(--Rehub, #999);
+    margin-right: 1.5em;
+  }
+  .three {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    border-radius: 100px;
+    background: var(--Rehub, #999);
+  }
   .task-list {
-    width: calc(100% - 24px); /* Adjust width to fit within the container */
-    padding: 12px;
+    width: calc(100% - 24px);
+    padding: 1em;
     background: #ffffff;
     font-family: "SF Pro", sans-serif;
     box-shadow: 0px 4px 20px 4px rgba(0, 0, 0, 0.1);
@@ -116,20 +146,60 @@
     margin-left: auto;
     margin-right: auto;
   }
-  .title {
-    margin-left: 20px;
-    margin-top: 12px;
-    margin-bottom: 8px;
-    color: var(--Schwarz, #343434);
-    font-size: 16px;
-    font-family: "SF Pro", sans-serif;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-  }
+  .exercise {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 0px; 
+}
+
+.title {
+  margin: 0em 20px;
+  color: var(--Schwarz, #343434);
+  font-size: 16px;
+  font-family: "SF Pro", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.skip-l {
+  display: flex;
+  align-items: center;
+  color: var(--Schwarz, #343434);
+  font-family: "SF Pro";
+  font-size: 28px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+  padding-bottom: 1px;
+  margin-left: 5.5em;
+}
+.skip-r {
+  display: flex;
+  align-items: center;
+  color: var(--Schwarz, #343434);
+  font-family: "SF Pro";
+  font-size: 28px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+  padding-bottom: 1px;
+  margin-right: 0.5em;
+}
+.sets {
+  color: var(--Schwarz, #343434);
+  margin: 0 0px;
+  font-size: 16px;
+  font-family: "SF Pro", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
   .stats-image {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 0px;
   }
   .stats-image img {
     max-width: 100%;
@@ -140,12 +210,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%; /* Make task full width */
-    margin-bottom: 12px; /* Add margin to create space between tasks */
+    width: 100%; 
+    margin-bottom: 12px;
     cursor: pointer;
   }
   .task:last-child {
-    margin-bottom: 0; /* Remove margin from the last task */
+    margin-bottom: 0;
   }
   .task p {
     margin: 0;

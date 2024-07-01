@@ -147,7 +147,7 @@
     background: #fafffe;
     padding: 0; /* Adjust padding to remove left and right margins */
     box-sizing: border-box;
-    margin: 0 auto;
+    margin-top: 1.4em;
   }
   .header {
     display: flex;
@@ -166,6 +166,7 @@
     overflow-x: auto;
     white-space: nowrap;
     padding-bottom: 10px; /* Optional, to ensure space for scrollbar */
+    margin-bottom: 2em;
   }
   .date-switcher {
     margin-top: 20px;
