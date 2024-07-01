@@ -8,7 +8,7 @@
     }, 3000);
 
     return () => {
-      clearTimeout(timer); // Clear timeout if the component is destroyed before the timeout completes
+      clearTimeout(timer); 
     };
   });
 
