@@ -12,12 +12,12 @@ Rehub ist eine App zur Überwachung und Verfolgung von Rehabilitationsübungen m
 
 ## Überblick
 
-Rehub ist eine webbasierte Anwendung, die Benutzern hilft, ihre Rehabilitationsübungen zu verfolgen. Die App verwendet die Mediapipe Pose-Bibliothek, um die Bewegungen des Benutzers zu erkennen und zu analysieren, und Svelte zur Erstellung der Benutzeroberfläche. Rehub soll jedem ermöglichen, überall mit wenig Stress und einfach seinen Reha-Übungsplan zu überwachen, zu tracken und die Übungen unter Überwachung zu machen, auch wenn man nicht in der Klinik ist.
+Rehub ist eine webbasierte Anwendung, die Benutzern hilft, ihre Rehabilitationsübungen zu verfolgen. Die App verwendet die Mediapipe Pose-Bibliothek, um die Bewegungen des Benutzers zu erkennen und zu analysieren, und Svelte zur Erstellung der Benutzeroberfläche. Rehub soll jedem ermöglichen, überall stressfrei und einfach seinen Reha-Übungsplan zu überwachen, zu tracken und die Übungen unter Überwachung auszuführen, auch wenn man nicht in der Klinik ist.
 
 ## Technologien
 
 - **Framework:** Svelte
-- **Bibliotheken:** Mediapipe Pose, Svelte Chart.js
+- **Bibliothek:** Mediapipe Pose
 - **Sprachen:** TypeScript, JavaScript, HTML, CSS
 - **Build-Tool:** Vite
 
@@ -62,9 +62,9 @@ Rehub ist eine webbasierte Anwendung, die Benutzern hilft, ihre Rehabilitations�
     Öffne einen Browser und gehe zu dem Ngrok-Link, der im Terminal angezeigt wird, z. B. `https://1234abcd.ngrok.io`.
 
 2. **Navigation:**
-    - **Dashboard:** Hier findest du eine Übersicht über alle durchgeführten Übungen und deren Statistiken. Es zeigt den Fortschritt und die Leistungsdaten der vergangenen Sitzungen an.
-    - **Tracking:** In diesem Bereich kannst du die Kamera aktivieren und deine Übungen in Echtzeit überwachen lassen. Die App verfolgt deine Bewegungen und gibt dir akustische Anweisungen, um die Übung korrekt auszuführen.
-    - **Stats:** In diesem Abschnitt kannst du detaillierte Informationen zu deinen Übungen und deren Fortschritt einsehen. Die App zeigt dir eine Analyse deiner Übungsausführungen, einschließlich der Wiederholungen und Sets.
+    - **Dashboard:** Hier findet man eine Übersicht über alle durchgeführten Übungen und deren Statistiken. Es zeigt den Fortschritt und die Leistungsdaten der vergangenen Sitzungen an.
+    - **Tracking:** In diesem Bereich kann man die Kamera aktivieren und seine Übungen in Echtzeit überwachen lassen. Die App verfolgt die Bewegungen und gibt akustische Anweisungen.
+    - **Stats:** In diesem Abschnitt kann man detaillierte Informationen zu den Übungen und deren Fortschritt einsehen. Die App zeigt eine Analyse der Übungsausführungen, einschließlich der Wiederholungen und Sets.
 
 3. **Lautstärkeregelung:**
     - **Mute:** Keine akustischen Anweisungen werden abgespielt.
