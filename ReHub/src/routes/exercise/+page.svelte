@@ -1,10 +1,16 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
-  import { exerciseStore } from "../../lib/exerciseStore"; 
+  import { exerciseStore } from "../../lib/exerciseStore";
   import { goto } from "$app/navigation";
   import { get } from "svelte/store";
 
-  let exercise = { title: "", gif: "", instructions: "", sets: 0, reps: 0 };
+  let exercise: {
+    title: string;
+    gif: string;
+    instructions: string;
+    sets: { reps: number; repsData: never[] }[];
+    reps: number;
+  } = { title: "", gif: "", instructions: "", sets: [], reps: 0 };
 
   onMount(() => {
     const storedExercise = get(exerciseStore);
@@ -16,21 +22,11 @@
   });
 
   function goBack() {
-    goto("/"); 
+    goto("/");
   }
 
-  async function startExercise() {
-    try {
-      const audio = new Audio("/Signal.mp3");
-      await audio.play();
-      audio.pause();
-      audio.currentTime = 0;
-
-      goto("/tracking");
-    } catch (error) {
-      console.error("Audio permission error:", error);
-      alert("Bitte erlauben Sie die Audiowiedergabe, um fortzufahren.");
-    }
+  function startExercise() {
+    goto("/tracking");
   }
 </script>
 
@@ -59,22 +55,7 @@
   </div>
 
   <div class="start-button">
-    <button
-      on:click={() => {
-        const audio = new Audio("/Signal.mp3");
-        audio
-          .play()
-          .then(() => {
-            audio.pause();
-            audio.currentTime = 0;
-            startExercise();
-          })
-          .catch((error) => {
-            console.error("Audio play failed:", error);
-            alert("Bitte erlauben Sie die Audiowiedergabe, um fortzufahren.");
-          });
-      }}
-    >
+    <button on:click={startExercise}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M8 5v14l11-7z" />
       </svg>
@@ -132,10 +113,7 @@
     height: auto;
     border-radius: 10px;
     object-fit: cover;
-    object-position: center; 
-    clip-path: inset(
-      20% 20% 10% 10%
-    );
+    object-position: center;
   }
 
   .content-block p {
